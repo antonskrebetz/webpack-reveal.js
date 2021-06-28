@@ -1,0 +1,283 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<meta name="description" content="Webpack! What is it?">
+		<meta name="author" content="Anton Skrebetz">
+		<title>Webpack</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css">
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<img src="img/icon-square-big.png" alt="webpack_logo" width="200" height="200">
+					<h2>Webpack. How it works?</h2>
+					<p>
+						<small>Created by <a href="https://github.com/antonskrebetz" target="_blanck">Anton Skrebetz</a></small>
+					</p>
+				</section>
+				<section>
+					<h2>Questions:</h2>
+					<ol class="fragment">
+						<li>Why does this tool exist?</li>
+						<li>What problems does this tool solve?</li>
+					</ol>
+				</section>
+				<section>
+					<h2>Why does Webpack exist?</h2>
+					<pre><code class="language-html" data-trim data-line-numbers>
+						App.js --->     |         |
+						Dashboard.js -> | Bundler | -> bundle.js
+						About.js --->   |         |
+					</code></pre>
+				</section>
+				<section>
+					<h2>What problem is webpack solving?</h2>
+					<pre><code class="fragment language-html" data-trim data-line-numbers>
+							...
+
+							<script src='src/header.js'></script>
+							<script src='src/main.js'></script>
+							<script src='src/car.js'></script>
+							<script src='src/toolbar.js'></script>
+							<script src='src/footer.js'></script>
+
+							...
+					</code></pre>
+					<h3 class="fragment">VS</h3>
+					<pre><code class="fragment language-html" data-trim data-line-numbers>
+							...
+
+							<script src='dist/bundle.js'></script>
+
+							...
+				</code></pre>
+				</section>
+				<section>
+					<h2>Installing webpack</h2>
+					<pre><code class="hljs" data-trim data-line-numbers>
+						npm install webpack webpack-cli --save-dev
+					</code></pre>
+				</section>
+				<section>
+					<h2>webpack.config.js</h2>
+					<pre><code class="hljs" data-trim data-line-numbers>
+						// webpack.config.js
+						module.exports = {}
+					</code></pre>
+				</section>
+				<section>
+					<h2>The point</h2>
+					<ol>
+						<li class="fragment">The entry point of your application</li>
+						<li class="fragment">Which transformations to make on your code</li>
+						<li class="fragment">The location to put the newly formed bundle(s)</li>
+					</ol>
+				</section>
+				<section>
+					<h2>The entry point</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						index.js
+							imports header.js
+							imports main.js
+								imports car.js
+								imports toolbar.js
+								imports race-road.js
+					</code></pre>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						// webpack.config.js
+
+						module.exports = {
+						  entry: './app/index.js'
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Transformations with Loaders</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						import auth from './modules/toolbar' // ✅
+						import config from './utils/config.json' // ✅
+						import './styles.css' // ❌
+						import car-svg from './assets/car.svg' // ❌
+					</code></pre>
+				</section>
+				<section>
+					<h2>.svg loader</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						npm install svg-inline-loader --save-dev
+					</code></pre>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						// webpack.config.js
+
+						module.exports = {
+						  entry: './app/index.js',
+						  module: {
+							rules: [
+							  { test: /\.svg$/, use: 'svg-inline-loader' }
+							]
+						  }
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>.css loader</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						npm install css-loader --save-dev
+					</code></pre>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						// webpack.config.js
+
+						module.exports = {
+							entry: './app/index.js',
+							module: {
+								rules: [
+								{ test: /\.svg$/, use: 'svg-inline-loader' },
+								{ test: /\.css$/, use: 'css-loader' }
+								]
+							}
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>style loader</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						npm install style-loader --save-dev
+					</code></pre>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						// webpack.config.js
+
+						module.exports = {
+						  entry: './app/index.js',
+						  module: {
+							rules: [
+							  { test: /\.svg$/, use: 'svg-inline-loader' },
+							  { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] }
+							]
+						  }
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>The output</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						const path = require('path')
+						module.exports = {
+						  entry: './app/index.js',
+						  module: {
+							rules: [
+							  { test: /\.svg$/, use: 'svg-inline-loader' },
+							  { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] }
+							]
+						  },
+						  output: {
+							path: path.resolve(__dirname, 'dist'),
+							filename: 'index_bundle.js'
+						  }
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Full process</h2>
+					<ol>
+						<li class="fragment" style="font-size: 2rem;">webpack grabs the entry point located at ./app/index.js</li>
+						<li class="fragment" style="font-size: 2rem;">It examines all of our import and require statements and creates a dependency graph</li>
+						<li class="fragment" style="font-size: 2rem;">webpack starts creating a bundle</li>
+						<li class="fragment" style="font-size: 2rem;">It takes the final bundle and outputs it at dist/index_bundle.js</li>
+					</ol>
+				</section>
+				<section>
+					<h2>Plugins</h2>
+					<ul>
+						<li class="fragment">Loaders: individual foles before or while the bundle is being generated</li>
+						<li class="fragment">Plugins: after the bundle has been created</li>
+					</ul>
+				</section>
+				<section>
+					<h2 style="text-transform: none;">HtmlWebpackPlugin</h2>
+					<p class="fragment">Generates an index.html page, puts it in our /dist folder with a script tag that refences the newly created bundle</p>
+				</section>
+				<section>
+					<h2 style="text-transform: none;">HtmlWebpackPlugin</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						npm install html-webpack-plugin --save-dev
+					</code></pre>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+						...
+
+						plugins: [
+							new HtmlWebpackPlugin()
+						]
+					</code></pre>
+				</section>
+				<section>
+					<h2>Running Webpack</h2>
+					<pre><code class="fragment hljs" data-trim data-line-numbers>
+						// package.json
+
+						"scripts": {
+						  "build": "webpack"
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Production vs dev mode</h2>
+					<pre><code class="fragment hljs" data-trim>
+						npm run build
+						npm run start
+					</code></pre>
+					<pre><code class="fragment hljs" data-trim>
+						// webpack.config.js
+
+						...
+
+						mode: development ? 'development' : 'production'
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2 style="text-transform: none;">webpack DevServer</h2>
+					<p class="fragment">development server for webpack doesn't generate /dist. Stores files in cache. Live reload</p>
+				</section>
+				<section>
+					<h2 style="text-transform: none;">webpack DevServer</h2>
+					<pre><code class="fragment hljs" data-trim>
+						npm install webpack-dev-server --save-dev
+					</code></pre>
+					<pre><code class="fragment hljs" data-trim>
+						"scripts": {
+							"build": "webpack",
+							"start": "webpack-dev-server",
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>The end.</h2>
+					<h2>Thanks for watching!</h2>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
