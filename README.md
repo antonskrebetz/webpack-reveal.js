@@ -1,1 +1,1 @@
-# webpack-reveal.js
+Deploy: https://webpack-reveal.netlify.app/
